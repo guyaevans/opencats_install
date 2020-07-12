@@ -1,0 +1,41 @@
+---
+# tasks file for guyaevans.opencats
+- name: Install OpenCATS dependencies for OpenCATS
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop: ['antiword, poppler-utils, html2text, unrtf, zip']
+- name: Get Opencats Zip file
+  get_url:
+    url: https://github.com/opencats/OpenCATS/releases/download/0.9.4/opencats-0.9.4-full.zip
+    dest: /tmp/opencats-0.9.4-full.zip
+- name: Unzip Opencats files
+  unarchive:
+    src: /tmp/opencats-0.9.4-full.zip
+    dest: /tmp/
+- name: Move source files to WWW directory
+  copy:
+      src: /tmp/home/travis/build/opencats/OpenCATS/
+      dest: /var/www/html
+      remote_src: True
+- name: Remove Source files
+  file:
+    path: /tmp/home/
+    state: absent
+- name: Remove Zip File
+  file:
+    path: /tmp/opencats-0.9.4-full.zip
+    state: absent
+- name: Change folder owner for OpenCATS
+  file: 
+    path: /var/www/html
+    owner: www-data
+    group: www-data
+    recurse: yes
+- name: Change perms on Attachement and Upload Directories
+  file:
+    path: "{{ item }}"
+    mode: 0770
+  loop:
+    - /var/www/html/upload
+    - /var/www/html/attachments
