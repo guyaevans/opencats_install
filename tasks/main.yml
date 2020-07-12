@@ -1,5 +1,9 @@
 ---
 # tasks file for guyaevans.opencats
+- name: Remove default apache page
+  file:
+    path: /var/www/html/index.html
+    status: absent
 - name: Install OpenCATS dependencies for OpenCATS
   apt:
     state: present
